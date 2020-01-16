@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "${env:MAYAPATH}\\bin\\mayapy.exe",
+    "python.autoComplete.extraPaths": ["${env:MAYAPATH}\\devkit\\other\\pymel\\extras\\completion\\py","${env:MAYAPATH}\\Python\\Lib\\site-packages"],
+    "python.jediEnabled": false
+}
