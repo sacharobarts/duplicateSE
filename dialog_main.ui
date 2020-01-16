@@ -75,7 +75,7 @@
         <rect>
          <x>120</x>
          <y>120</y>
-         <width>338</width>
+         <width>386</width>
          <height>91</height>
         </rect>
        </property>
@@ -97,6 +97,9 @@
           </item>
           <item>
            <widget class="QDoubleSpinBox" name="t_x">
+            <property name="decimals">
+             <number>4</number>
+            </property>
             <property name="minimum">
              <double>-99999999.000000000000000</double>
             </property>
@@ -107,6 +110,9 @@
           </item>
           <item>
            <widget class="QDoubleSpinBox" name="t_y">
+            <property name="decimals">
+             <number>4</number>
+            </property>
             <property name="minimum">
              <double>-99999999.000000000000000</double>
             </property>
@@ -117,6 +123,9 @@
           </item>
           <item>
            <widget class="QDoubleSpinBox" name="t_z">
+            <property name="decimals">
+             <number>4</number>
+            </property>
             <property name="minimum">
              <double>-99999999.000000000000000</double>
             </property>
@@ -141,6 +150,9 @@
           </item>
           <item>
            <widget class="QDoubleSpinBox" name="r_x">
+            <property name="decimals">
+             <number>4</number>
+            </property>
             <property name="minimum">
              <double>-99999999.000000000000000</double>
             </property>
@@ -151,6 +163,9 @@
           </item>
           <item>
            <widget class="QDoubleSpinBox" name="r_y">
+            <property name="decimals">
+             <number>4</number>
+            </property>
             <property name="minimum">
              <double>-99999999.000000000000000</double>
             </property>
@@ -161,6 +176,9 @@
           </item>
           <item>
            <widget class="QDoubleSpinBox" name="r_z">
+            <property name="decimals">
+             <number>4</number>
+            </property>
             <property name="minimum">
              <double>-99999999.000000000000000</double>
             </property>
@@ -185,6 +203,9 @@
           </item>
           <item>
            <widget class="QDoubleSpinBox" name="s_x">
+            <property name="decimals">
+             <number>4</number>
+            </property>
             <property name="minimum">
              <double>-99999999.000000000000000</double>
             </property>
@@ -198,6 +219,9 @@
           </item>
           <item>
            <widget class="QDoubleSpinBox" name="s_y">
+            <property name="decimals">
+             <number>4</number>
+            </property>
             <property name="minimum">
              <double>-99999999.000000000000000</double>
             </property>
@@ -211,6 +235,9 @@
           </item>
           <item>
            <widget class="QDoubleSpinBox" name="s_z">
+            <property name="decimals">
+             <number>4</number>
+            </property>
             <property name="minimum">
              <double>-99999999.000000000000000</double>
             </property>
@@ -433,7 +460,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QCheckBox" name="checkBox">
+      <widget class="QCheckBox" name="repeat_first">
        <property name="geometry">
         <rect>
          <x>120</x>
@@ -492,8 +519,6 @@
     </layout>
    </item>
   </layout>
-  <zorder>scrollArea</zorder>
-  <zorder>horizontalLayoutWidget</zorder>
  </widget>
  <resources/>
  <connections/>
