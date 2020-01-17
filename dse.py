@@ -2,14 +2,13 @@ import os, re, functools, webbrowser, cPickle, logging, cStringIO, platform, zip
 from maya  import cmds, mel, OpenMayaUI, OpenMaya
 import maya.api.OpenMaya as om
 import xml.etree.ElementTree as xml 
-
 from maya.app.general.mayaMixin import MayaQWidgetDockableMixin, MayaQDockWidget
-
 from qtUtil import *
 
 sys.path.append(os.path.dirname(WORKDIRECTORY))
 ui_main_window, ui_base_class = loadUiType( '%s/dialog_main.ui'%WORKDIRECTORY )
 
+source_dag_paths = []
 preview_mobjs = [[]]
 event_callback_idx = []
 dse_main_window = ()
@@ -97,10 +96,17 @@ class DuplicateSEUI(MayaQWidgetDockableMixin, ui_main_window, ui_base_class):
             fn_dag = om.MFnDagNode(mobj)
         om.MMessage.removeCallbacks(event_callback_idx)
 
+def createDuplicate(dpath):
+    fn_dn = om.MFnDagNode(dpath)
+    d = fn_dn.duplicate()
+    return d
 
 
 def onLivePositionUpdate(*args):
     p = om.MPlug(args[1])
+    source_dp = args[3]
+    fntrans_source = om.MFnTransform(source_dp)
+    source_trans = fntrans_source.translation(om.MSpace.kTransform)
     if p.isCompound:
         clen = p.numChildren()
         i = 0
@@ -108,21 +114,43 @@ def onLivePositionUpdate(*args):
             cp = p.child(i)
             cn = cp.partialName()
             v = cp.asDouble()
+            if cn == 'tx':
+                v -= source_trans.x
+            elif cn == 'ty':
+                v -= source_trans.y
+            elif cn == 'tz':
+                v -= source_trans.z
             dse_main_window.setTransformDisplay({'channel': cn, 'value': v})
             i += 1
     cn = p.partialName()
     v = p.asDouble()
+    if cn == 'tx':
+        v -= source_trans.x
+    elif cn == 'ty':
+        v -= source_trans.y
+    elif cn == 'tz':
+        v -= source_trans.z
     dse_main_window.setTransformDisplay({'channel': cn, 'value': v})
 
 
 def buildPreviewObjs():
     print 'building preview'
     sl = om.MGlobal.getActiveSelectionList()
+    if sl.isEmpty():
+        om.MGlobal.displayWarning('Selection list empty')
+        return
     i = 0
     while i < sl.length():
-        fn_dagnode = om.MFnDagNode(sl.getDagPath(i))
+        try:
+            dp = sl.getDagPath(i)
+        except TypeError:
+            om.MGlobal.displayWarning('One or more wrong selection type')
+            i += 1
+            continue;
+        source_dag_paths.append(dp)
+        fn_dagnode = om.MFnDagNode(dp)
         d = fn_dagnode.duplicate()
-        acc = om.MNodeMessage.addAttributeChangedCallback(d,onLivePositionUpdate)
+        acc = om.MNodeMessage.addAttributeChangedCallback(d,onLivePositionUpdate, dp)
         event_callback_idx.append(acc)
         preview_mobjs[i].append(d)
         i += 1
@@ -133,12 +161,14 @@ def updatePreviewCount(count):
         trans = dse_main_window.getTransform()
         i = 0
         while i < len(preview_mobjs):
-            fn_dagnode = om.MFnDagNode(preview_mobjs[i][0])
-            d = fn_dagnode.duplicate()
-            di = len(preview_mobjs[i]) + 1
+            d = createDuplicate(source_dag_paths[i])
+            fn_source_trans = om.MFnTransform(source_dag_paths[i])
+            stransform = fn_source_trans.translation(om.MSpace.kTransform)
+            # fn_dagnode = om.MFnDagNode(preview_mobjs[i][0])
+            # d = fn_dagnode.duplicate()
             fn_trans = om.MFnTransform(d)
-            print trans['translate'], di, trans['translate'] * di
-            fn_trans.setTranslation(trans['translate'] * di, om.MSpace.kTransform)
+            di = len(preview_mobjs[i]) + 1
+            fn_trans.setTranslation((trans['translate'] * di) + stransform, om.MSpace.kTransform)
             preview_mobjs[i].append(d)
             i += 1
     while len(preview_mobjs[0]) > count:
